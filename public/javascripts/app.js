@@ -425,6 +425,19 @@ function loadCurrentData() {
     });
 }
 
+function loadLastData() {
+    $.getJSON('/api/last?sensor_ip=\"192.168.7.91\"', function(json) {
+        if(!json.success) {
+            displayError(json.error, '#error-container');
+            return;
+        }
+
+        $('#curr-temp-inside').text(format(json.temperature) + '°');
+        $('#curr-hum-inside').text(json.humidity + '%');
+	$('#curr-press-inside').text(json.pressure + ' hPa');
+    });
+}
+
 function chartComplete() {
     // Fired at Highchars' load event
     // 'this' points to the Highcharts object
