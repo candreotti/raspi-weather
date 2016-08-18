@@ -20,8 +20,8 @@ var config = {
      * You can disable geolocation and provide coordinates if you want.
      */
     useGeoLocation: true,
-    latitude: 47.51,
-    longitude: 19.09,
+    latitude: 44.835,
+    longitude: 8.625,
 
     /**
      * Color zones for the graph lines.
@@ -43,9 +43,9 @@ var config = {
      * Forecast.io API key.
      * Please don't abuse this. Be a good guy and request your own at http://developer.forecast.io
      */
-    APIKey: '262d0436a1b2d47e7593f0bb41491b64',
+    APIKey: '1df6ffb1f2cb61d81f16723737f44f6d',
     /* Forecast.io language for data retrieval */
-    lang: 'en',
+    lang: 'it',
 
     // Limits of the night plotband (the gray area on the graphs)
     nightStart: 0,
