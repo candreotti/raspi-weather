@@ -45,7 +45,7 @@ var config = {
      */
     APIKey: '1df6ffb1f2cb61d81f16723737f44f6d',
     /* Forecast.io language for data retrieval */
-    lang: 'it',
+    lang: 'en',
 
     // Limits of the night plotband (the gray area on the graphs)
     nightStart: 0,
@@ -422,6 +422,7 @@ function loadCurrentData() {
         $('#curr-temp-inside').text(format(json.temperature) + '°');
         $('#curr-hum-inside').text(json.humidity + '%');
 	$('#curr-press-inside').text(json.pressure + ' hPa');
+    $('#last-measure-inside').text(new Date().toISOString().replace(/T/, ' ').replace(/\..+/, ''));
     });
 }
 
@@ -435,6 +436,7 @@ function loadLastData() {
         $('#curr-temp-inside').text(format(json.temperature) + '°');
         $('#curr-hum-inside').text(json.humidity + '%');
 	$('#curr-press-inside').text(json.pressure + ' hPa');
+    $('#last-measure-inside').text(json.timestamp);
     });
 }
 
