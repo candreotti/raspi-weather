@@ -9,8 +9,8 @@ router.get('/current', function(req, res) {
 });
 
 /* GET last sensor data. */
-router.get('/last', function(req, res) {
-    var sensor_ip = req.param.sensor_ip;
+router.get('/last/:sensor_ip', function(req, res) {
+    var sensor_ip = req.params.sensor_ip;
     res.json(sensor.getLast(sensor_ip));
 });
 

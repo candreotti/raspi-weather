@@ -426,7 +426,7 @@ function loadCurrentData() {
 }
 
 function loadLastData() {
-    $.getJSON('/api/last?sensor_ip=\"192.168.7.91\"', function(json) {
+    $.getJSON('/api/last/192.168.7.91', function(json) {
         if(!json.success) {
             displayError(json.error, '#error-container');
             return;
