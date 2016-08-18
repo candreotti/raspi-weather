@@ -1,5 +1,12 @@
 var config = {
     /**
+     * Operation mode.
+     * true: use BME280 sensor directly connected to raspberry's GPIO pins.
+     * false: use data collected from remote sensors.
+     */
+    localSensorMode: false,
+
+    /**
      * Frequency of measurement in minutes
      * Note: it's only needed for the graph intervals, doesn't set the logging interval.
      * You have to edit your crontab for that.
@@ -447,7 +454,11 @@ function chartComplete() {
     if(config.loadedCharts.length === config.numOfCharts) {
         // Delay the current weather request until the others (charts) have completed,
         // because it takes a long time and slows down poor little Pi :(
-        loadCurrentData();
+        if (config.localSensorMode) {
+            loadCurrentData();
+        } else {
+            loadLastData();
+        }
         // also load weather info from forecast.io
 	loadOutsideWeather();
     }
@@ -600,7 +611,11 @@ function computeStats() {
     $stats.append('<tr><th class="sub">max</th><td>' + stats.today.pressure.max + ' hPa</td><td>' + stats.interval.pressure.max + ' hPa</td></tr>');
 } else {
     //if no stats are available, load other info
-    loadCurrentData();
+    if (config.localSensorMode) {
+        loadCurrentData();
+    } else {
+        loadLastData();
+    }
     loadOutsideWeather();
 }
 }
@@ -673,7 +688,11 @@ $(document).ready(function() {
 
     $('#btn-reload-inside').on('click', function() {
         $('#curr-temp-inside, #curr-hum-inside, #curr-press-inside').text('...');
-        loadCurrentData();
+        if (config.localSensorMode) {
+            loadCurrentData();
+        } else {
+            loadLastData();
+        }
     });
 
     $('#btn-reload-outside').on('click', function() {
