@@ -47,8 +47,8 @@ def clientthread(conn):
     print 'Received: ' + json_string
     sensor_data = json.loads(json_string)
     sensor_ip = sensor_data["sensorIP"]
-    degrees = sensor_data["tempC"]
-    hectopascals = sensor_data["pressure"] / 100
+    degrees = float(sensor_data["tempC"])
+    hectopascals = float(sensor_data["pressure"]) / 100
     #altitude = sensor_data["altitudeM"]
     humidity = sensor_data["humidity"]
     timestamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
@@ -79,9 +79,9 @@ def clientthread(conn):
         altitude = row[0]
         # Adjust pressure to sea level
         hectopascals = hectopascals*(1-(0.0065 * altitude)/(degrees + 0.0065 * altitude + 273.15))**(-5.257)
-        f.write('Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.3f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = {0:0.2f} %'.format(humidity) + '\n')
-        print 'Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.3f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = {0:0.2f} %'.format(humidity)
-        args = [timestamp, round(degrees, 2), int(humidity), round(hectopascals, 2), sensor_ip]
+        f.write('Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.1f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = %s'%humidity + ' %\n')
+        print 'Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.1f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = %s'%humidity + ' %'
+        args = [timestamp, round(degrees, 1), int(humidity), round(hectopascals, 2), sensor_ip]
         c.execute('INSERT INTO indoor (timestamp, temperature, humidity, pressure, sensor_ip) VALUES (?, ?, ?, ?, ?)', args)
         db.commit()
         db.close()
