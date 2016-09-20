@@ -19,6 +19,8 @@ int statusLed = 2; // GPIO16 (2 for chinese NodeMCU)
 //Global sensor object
 Adafruit_BME280 mySensor;
 
+char MAC_char[17];
+
 void setup() {
   //Init I2C interface using GPIO pin 12 for SLA and 14 for SCL
   Wire.begin(12,14);
@@ -32,14 +34,14 @@ void setup() {
   // Connect to WiFi network
   Serial.println();
   Serial.println();
-  /*uint8_t MAC_array[6];
-  char MAC_char[18];
+  uint8_t MAC_array[6];
   WiFi.macAddress(MAC_array);
-  for (int i = 0; i < sizeof(MAC_array); ++i){
+  for (int i = 0; i < sizeof(MAC_array) - 1; ++i){
     sprintf(MAC_char,"%s%02x:",MAC_char,MAC_array[i]);
   }
+  sprintf(MAC_char,"%s%02x",MAC_char,MAC_array[5]);
   Serial.print("WiFi MAC address: ");
-  Serial.println(MAC_char);*/
+  Serial.println(MAC_char);
   Serial.print("Connecting to ");
   Serial.println(ssid);
  
@@ -77,6 +79,7 @@ void setup() {
 void loop() {
   if (boot_up == true) {
     // Wait for sensor calibration before sending first measurement
+    Serial.println("First boot, wait for sensor calibration...");
     delay(60UL * 1000UL);
     boot_up = false;
   }
@@ -112,15 +115,16 @@ void loop() {
 
   Serial.println("Retrieving sensor data...");
   float tempC = mySensor.readTemperature();
-  float pressure = mySensor.readPressure()/* / 100.0F*/;
+  float pressure = mySensor.readPressure();
   float humidity = mySensor.readHumidity();
 
   DynamicJsonBuffer jsonBuffer;
   JsonObject& root = jsonBuffer.createObject();
   root["sensorIP"] = WiFi.localIP().toString();
-  root["tempC"] = tempC;
-  root["pressure"] = pressure;
-  root["humidity"] = humidity;
+  root["sensorMAC"] = MAC_char;
+  root["tempC"] = String(tempC, 1);
+  root["pressure"] = String(pressure, 2);
+  root["humidity"] = String(humidity, 0);
 
   Serial.print("Sending data: ");
   root.printTo(Serial);
@@ -140,4 +144,3 @@ void loop() {
   delay(30UL * 60UL * 1000UL); //30 minutes
   //delay(15000);
 }
- 
