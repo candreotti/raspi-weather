@@ -17,8 +17,8 @@ var sensor = {
             };
         }
     },
-    getLast: function (sensor_ip) {
-        var result = execSync('./sensor_scripts/last_measure.py ' + sensor_ip).toString().split('\n');
+    getLast: function (sensor_mac) {
+        var result = execSync('./sensor_scripts/last_measure.py ' + sensor_mac).toString().split('\n');
         if (result[0] === 'error') {
             return {
                 success: false,

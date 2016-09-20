@@ -15,19 +15,19 @@ var db = {
         });
     },
 
-    getPast: function(hours, res) {
+    getPast: function(hours, sensor_mac, res) {
         db.connect();
 
         var hourString = -hours + ' hours';
         var stmt = db.connection.prepare(
-            'SELECT timestamp, temperature, humidity, pressure FROM indoor WHERE timestamp >= datetime(?, ?, ?)',
+            'SELECT timestamp, temperature, humidity, pressure FROM indoor WHERE timestamp >= datetime(?, ?, ?) AND sensor_mac = ?',
             function(err) {
                 if(err) {
                     db.errorHandler(err, res);
                 }
             }
         );
-        stmt.all(['now', 'localtime', hourString], function(err, rows) {
+        stmt.all(['now', 'localtime', hourString, sensor_mac], function(err, rows) {
             if(err) {
                 db.errorHandler(err, res);
             } else {
@@ -39,7 +39,7 @@ var db = {
         });
     },
 
-    getComparison: function(firstType, secondType, res) {
+    getComparison: function(firstType, secondType, sensor_mac, res) {
         db.connect();
 
         var result = {
@@ -56,14 +56,14 @@ var db = {
         db.connection.serialize(function() {
             if(firstType === 'today') {
                 var stmt = db.connection.prepare(
-                    'SELECT timestamp, temperature, humidity, pressure FROM indoor WHERE timestamp >= datetime(?, ?, ?)',
+                    'SELECT timestamp, temperature, humidity, pressure FROM indoor WHERE timestamp >= datetime(?, ?, ?) AND sensor_mac = ?',
                     function(err) {
                         if(err) {
                             db.errorHandler(err, res);
                         }
                     }
                 );
-                stmt.all(['now', 'localtime', 'start of day'], function(err, rows) {
+                stmt.all(['now', 'localtime', 'start of day', sensor_mac], function(err, rows) {
                     if(err) {
                         db.errorHandler(err, res);
                     } else {
@@ -79,7 +79,7 @@ var db = {
                 var stmt = db.connection.prepare(
                     'SELECT timestamp, temperature, humidity, pressure\
                     FROM indoor WHERE timestamp >= datetime($now, $timezone, $start, $minus)\
-                    AND timestamp <= datetime($now, $timezone, $start)',
+                    AND timestamp <= datetime($now, $timezone, $start) AND sensor_mac = $sensorMAC',
                     function(err) {
                         if(err) {
                             db.errorHandler(err, res);
@@ -90,7 +90,8 @@ var db = {
                     $now: 'now',
                     $timezone: 'localtime',
                     $start: 'start of day',
-                    $minus: '-1 day'
+                    $minus: '-1 day',
+                    $sensorMAC: sensor_mac
                 }, function(err, rows) {
                     if(err) {
                         db.errorHandler(err, res);

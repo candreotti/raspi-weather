@@ -7,10 +7,10 @@ import sqlite3
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
 try:
-    sensor_ip = sys.argv[1]
+    sensor_mac = sys.argv[1]
     db = sqlite3.connect(os.path.join(dir_path, '../raspi-weather.db'))
     c = db.cursor()
-    c.execute('SELECT * FROM indoor WHERE sensor_ip = ? ORDER BY id DESC LIMIT 1', (sensor_ip,))
+    c.execute('SELECT * FROM indoor WHERE sensor_mac = ? ORDER BY id DESC LIMIT 1', (sensor_mac,))
     row = c.fetchone()
     timestamp = row[1]
     temperature = row[2]

@@ -9,30 +9,34 @@ router.get('/current', function(req, res) {
 });
 
 /* GET last sensor data. */
-router.get('/last/:sensor_ip', function(req, res) {
-    var sensor_ip = req.params.sensor_ip;
-    res.json(sensor.getLast(sensor_ip));
+router.get('/last/:sensor_mac', function(req, res) {
+    var sensor_mac = req.params.sensor_mac;
+    res.json(sensor.getLast(sensor_mac));
 });
 
 /* GET past 24h */
-router.get('/past/24h', function(req, res) {
+router.get('/past/24h/:sensor_mac', function(req, res) {
     // Callback...
-    db.getPast(24, res);
+    var sensor_mac = req.params.sensor_mac;
+    db.getPast(24, sensor_mac, res);
 });
 
 /* GET past week */
-router.get('/past/week', function(req, res) {
-    db.getPast(24*7, res);
+router.get('/past/week/:sensor_mac', function(req, res) {
+    var sensor_mac = req.params.sensor_mac;
+    db.getPast(24*7, sensor_mac, res);
 });
 
 /* GET past month */
-router.get('/past/month', function(req, res) {
-    db.getPast(24*30, res);
+router.get('/past/month/:sensor_mac', function(req, res) {
+    var sensor_mac = req.params.sensor_mac;
+    db.getPast(24*30, sensor_mac, res);
 });
 
 /* GET yesterday vs today */
-router.get('/compare/today/yesterday', function(req, res) {
-    db.getComparison('today', 'yesterday', res);
+router.get('/compare/today/yesterday/:sensor_mac', function(req, res) {
+    var sensor_mac = req.params.sensor_mac;
+    db.getComparison('today', 'yesterday', sensor_mac, res);
 });
 
 module.exports = router;

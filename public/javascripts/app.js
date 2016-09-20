@@ -434,7 +434,7 @@ function loadCurrentData() {
 }
 
 function loadLastData() {
-    $.getJSON('/api/last/192.168.7.91', function(json) {
+    $.getJSON('/api/last/5c:cf:7f:c0:4b:99', function(json) {
         if(!json.success) {
             displayError(json.error, '#error-container');
             return;
@@ -649,9 +649,9 @@ $(document).ready(function() {
 
     getLocation();
 
-    loadDoubleChart('/api/compare/today/yesterday', '#chart-today-vs');
+    loadDoubleChart('/api/compare/today/yesterday/5c:cf:7f:c0:4b:99', '#chart-today-vs');
 
-    loadChart('/api/past/week', '#chart-past');
+    loadChart('/api/past/week/5c:cf:7f:c0:4b:99', '#chart-past');
     // loadCurrentData() is fired by chartComplete()
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -681,7 +681,7 @@ $(document).ready(function() {
 
         var interval = $(e.target).parent().attr('data-interval');
         $('#dropdown-label-past').text(interval).data('intervalType', interval); // Data used in computeStats()
-        loadChart('/api/past/' + interval, '#chart-past');
+        loadChart('/api/past/' + interval + '/5c:cf:7f:c0:4b:99', '#chart-past');
 
     });
 
@@ -712,8 +712,8 @@ $(document).ready(function() {
         config.loadedCharts = [ ];
 
         loadOutsideWeather();
-        loadDoubleChart('/api/compare/today/yesterday', '#chart-today-vs');
-        loadChart('/api/past/week', '#chart-past');
+        loadDoubleChart('/api/compare/today/yesterday/5c:cf:7f:c0:4b:99', '#chart-today-vs');
+        loadChart('/api/past/week/5c:cf:7f:c0:4b:99', '#chart-past');
         // loadCurrentData() is fired by chartComplete()
     });
 });
