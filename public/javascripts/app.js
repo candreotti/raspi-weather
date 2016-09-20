@@ -443,7 +443,8 @@ function loadLastData() {
         $('#curr-temp-inside').text(format(json.temperature) + '°');
         $('#curr-hum-inside').text(json.humidity + '%');
 	$('#curr-press-inside').text(json.pressure + ' hPa');
-    $('#last-measure-inside').text(json.timestamp);
+        $('#last-measure-inside').text(json.timestamp);
+        $('#current-sensor-label')[0].innerText = 'BME280 Sensor IP: ' + available_sensors[selected_sensor_mac].ip;
     });
 }
 
@@ -637,6 +638,14 @@ function autoReload() {
     }
 }
 
+function Sensor(ip, name, description, altitude) {
+    this.ip = ip;
+    this.name = name;
+    this.description = description;
+    this.altitude = altitude;
+}
+var available_sensors = {};
+
 var selected_sensor_mac = undefined;
 $(document).ready(function() {
     $.getJSON('/api/sensors', function(json) {
@@ -650,6 +659,11 @@ $(document).ready(function() {
             var el = document.createElement("option");
             el.textContent = json.data[i].ip;
             el.value = json.data[i].mac;
+            available_sensors[json.data[i].mac] = new Sensor(
+                json.data[i].ip,
+                json.data[i].name,
+                json.data[i].description,
+                json.data[i].altitude);
             sensor_list.appendChild(el);
         }
         selected_sensor_mac = sensor_list.options[sensor_list.selectedIndex].value;
