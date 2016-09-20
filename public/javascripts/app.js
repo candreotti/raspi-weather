@@ -655,6 +655,7 @@ $(document).ready(function() {
         selected_sensor_mac = sensor_list.options[sensor_list.selectedIndex].value;
         sensor_list.addEventListener('change', function(evt) {
             selected_sensor_mac = this.value;
+            document.getElementById('btn-reload-all').click();
         });
         init();
     });
@@ -725,6 +726,7 @@ function init() {
 
     $('#btn-reload-all').on('click', function() {
         $('#error-container').empty();
+        $('#chart-today-vs').empty();
         $('#curr-temp-outside, #curr-hum-outside, #curr-press-outside, #prec-prob-outside, #prec-int-outside, #prec-type-outside, #curr-temp-inside, #curr-hum-inside, #curr-press-inside, #forecast-summary').text('...');
         $('#chart-today-vs, #chart-past').each(function(i, el) {
             if ($(el).highcharts()) {
