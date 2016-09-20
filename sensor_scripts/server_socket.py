@@ -47,6 +47,7 @@ def clientthread(conn):
     print 'Received: ' + json_string
     sensor_data = json.loads(json_string)
     sensor_ip = sensor_data["sensorIP"]
+    sensor_mac = sensor_data["sensorMAC"]
     degrees = float(sensor_data["tempC"])
     hectopascals = float(sensor_data["pressure"]) / 100
     #altitude = sensor_data["altitudeM"]
@@ -58,22 +59,24 @@ def clientthread(conn):
         db = sqlite3.connect(os.path.join(dir_path, '../raspi-weather.db'))
         c = db.cursor()
         c.execute("""CREATE TABLE IF NOT EXISTS sensors(
-            'ip'            TEXT PRIMARY KEY,
+            'mac'           TEXT PRIMARY KEY,
+            'ip'            TEXT,
             'name'          TEXT,
             'description'   TEXT,
-            'altitude'      NUMERIC)""")
+            'altitude'      NUMERIC DEFAULT 0)""")
         c.execute("""CREATE TABLE IF NOT EXISTS indoor(
             `id`            INTEGER PRIMARY KEY AUTOINCREMENT,
             `timestamp`     DATETIME,
             `temperature`   NUMERIC,
             `humidity`      NUMERIC,
             `pressure`      NUMERIC,
-            'sensor_ip'     TEXT)""")
+            'sensor_mac'    TEXT)""")
         db.commit()
-        sensor_args = [sensor_ip, 0]
-        c.execute('INSERT OR IGNORE INTO sensors (ip, altitude) VALUES (?, ?)', sensor_args)
+        c.execute('UPDATE sensors SET ip=? WHERE mac=?', (sensor_ip, sensor_mac,))
+        sensor_args = [sensor_mac, sensor_ip]
+        c.execute('INSERT OR IGNORE INTO sensors (mac, ip) VALUES (?, ?)', sensor_args)
         db.commit()
-        c.execute('SELECT altitude FROM sensors WHERE ip = ?', (sensor_ip,) )
+        c.execute('SELECT altitude FROM sensors WHERE mac = ?', (sensor_mac,) )
         row = c.fetchone()
         # Retrieve sensor altitude
         altitude = row[0]
@@ -81,8 +84,8 @@ def clientthread(conn):
         hectopascals = hectopascals*(1-(0.0065 * altitude)/(degrees + 0.0065 * altitude + 273.15))**(-5.257)
         f.write('Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.1f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = %s'%humidity + ' %\n')
         print 'Inserting data: Timestamp = %s'%timestamp + ', Temp = {0:0.1f} deg C'.format(degrees) + ', Pressure = {0:0.2f} hPa'.format(hectopascals) + ', Humidity = %s'%humidity + ' %'
-        args = [timestamp, round(degrees, 1), int(humidity), round(hectopascals, 2), sensor_ip]
-        c.execute('INSERT INTO indoor (timestamp, temperature, humidity, pressure, sensor_ip) VALUES (?, ?, ?, ?, ?)', args)
+        args = [timestamp, round(degrees, 1), int(humidity), round(hectopascals, 2), sensor_mac]
+        c.execute('INSERT INTO indoor (timestamp, temperature, humidity, pressure, sensor_mac) VALUES (?, ?, ?, ?, ?)', args)
         db.commit()
         db.close()
         print("Done")
