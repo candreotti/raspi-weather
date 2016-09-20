@@ -15,6 +15,29 @@ var db = {
         });
     },
 
+    getSensors: function(res) {
+        db.connect();
+
+        var stmt = db.connection.prepare(
+            'SELECT * FROM sensors',
+            function(err) {
+                if(err) {
+                    db.errorHandler(err, res);
+                }
+            }
+        );
+        stmt.all(function(err, rows) {
+            if(err) {
+                db.errorHandler(err, res);
+            } else {
+                res.json({
+                    success: true,
+                    data: rows
+                });
+            }
+        });
+    },
+
     getPast: function(hours, sensor_mac, res) {
         db.connect();
 

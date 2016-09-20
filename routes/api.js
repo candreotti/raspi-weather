@@ -3,6 +3,11 @@ var router = express.Router();
 var sensor = require('../model/sensor');
 var db = require('../model/db');
 
+/* GET available sensors. */
+router.get('/sensors', function(req, res) {
+    db.getSensors(res);
+});
+
 /* GET current sensor data. */
 router.get('/current', function(req, res) {
     res.json(sensor.getCurrent());

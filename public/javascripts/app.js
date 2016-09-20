@@ -434,7 +434,7 @@ function loadCurrentData() {
 }
 
 function loadLastData() {
-    $.getJSON('/api/last/5c:cf:7f:c0:4b:99', function(json) {
+    $.getJSON('/api/last/' + selected_sensor_mac, function(json) {
         if(!json.success) {
             displayError(json.error, '#error-container');
             return;
@@ -637,7 +637,30 @@ function autoReload() {
     }
 }
 
+var selected_sensor_mac = undefined;
 $(document).ready(function() {
+    $.getJSON('/api/sensors', function(json) {
+        if(!json.success) {
+            displayError(json.error, '#error-container');
+            return;
+        }
+        var sensor_list = document.getElementById("sensor-list");
+        $('#sensor-list').contents().remove();
+        for (var i = 0; i < json.data.length; i++) {
+            var el = document.createElement("option");
+            el.textContent = json.data[i].ip;
+            el.value = json.data[i].mac;
+            sensor_list.appendChild(el);
+        }
+        selected_sensor_mac = sensor_list.options[sensor_list.selectedIndex].value;
+        sensor_list.addEventListener('change', function(evt) {
+            selected_sensor_mac = this.value;
+        });
+        init();
+    });
+});
+
+function init() {
     // Init
     Highcharts.setOptions({
         global: {
@@ -649,9 +672,9 @@ $(document).ready(function() {
 
     getLocation();
 
-    loadDoubleChart('/api/compare/today/yesterday/5c:cf:7f:c0:4b:99', '#chart-today-vs');
+    loadDoubleChart('/api/compare/today/yesterday/' + selected_sensor_mac, '#chart-today-vs');
 
-    loadChart('/api/past/week/5c:cf:7f:c0:4b:99', '#chart-past');
+    loadChart('/api/past/week/' + selected_sensor_mac, '#chart-past');
     // loadCurrentData() is fired by chartComplete()
 
     $('[data-toggle="tooltip"]').tooltip();
@@ -681,7 +704,7 @@ $(document).ready(function() {
 
         var interval = $(e.target).parent().attr('data-interval');
         $('#dropdown-label-past').text(interval).data('intervalType', interval); // Data used in computeStats()
-        loadChart('/api/past/' + interval + '/5c:cf:7f:c0:4b:99', '#chart-past');
+        loadChart('/api/past/' + interval + '/' + selected_sensor_mac, '#chart-past');
 
     });
 
@@ -712,8 +735,8 @@ $(document).ready(function() {
         config.loadedCharts = [ ];
 
         loadOutsideWeather();
-        loadDoubleChart('/api/compare/today/yesterday/5c:cf:7f:c0:4b:99', '#chart-today-vs');
-        loadChart('/api/past/week/5c:cf:7f:c0:4b:99', '#chart-past');
+        loadDoubleChart('/api/compare/today/yesterday/' + selected_sensor_mac, '#chart-today-vs');
+        loadChart('/api/past/week/' + selected_sensor_mac, '#chart-past');
         // loadCurrentData() is fired by chartComplete()
     });
-});
+}
