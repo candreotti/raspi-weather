@@ -65,10 +65,8 @@ void setup() {
   Serial.println(" dBm");
  
   // Print the IP address
-  Serial.print("Use this URL to connect: ");
-  Serial.print("http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("/");
+  Serial.print("Assigned IP: ");
+  Serial.println(WiFi.localIP());
   // connect to BME280 sensor
   if (!mySensor.begin(0x76)) {
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
@@ -97,6 +95,7 @@ void loop() {
     Serial.print(attempts);
     Serial.println(")");
     if (attempts >= MAX_ATTEMPTS) {
+      Serial.println("Reached MAX_ATTEMPTS while trying to connect to server, will try again in 30 minutes..");
       attempts = 0;
       //Reached MAX_ATTEMPTS, retry again after 30 minutes
       delay(30UL * 60UL * 1000UL); //30 minutes
