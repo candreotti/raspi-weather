@@ -13,8 +13,9 @@ const int port = 3080;
 const int MAX_ATTEMPTS = 5;
 int attempts = 0;
 bool boot_up = true;
- 
-int statusLed = 2; // GPIO16 (2 for chinese NodeMCU)
+
+//int statusLed = LED_BUILTIN; // GPIO16
+int statusLed = 2; // GPIO2 (for chinese NodeMCU)
 
 //Global sensor object
 Adafruit_BME280 mySensor;
@@ -56,7 +57,7 @@ void setup() {
   }
   Serial.println("");
   Serial.println("WiFi connected");
-  digitalWrite(statusLed, LOW);
+  digitalWrite(statusLed, HIGH);
 
   //Print signal strength
   long rssi = WiFi.RSSI();
@@ -77,8 +78,17 @@ void setup() {
 void loop() {
   if (boot_up == true) {
     // Wait for sensor calibration before sending first measurement
-    Serial.println("First boot, wait for sensor calibration...");
-    delay(60UL * 1000UL);
+    Serial.print("First boot, wait for sensor calibration");
+    for (int i = 0; i < 30; i++) {
+      Serial.print(".");
+      digitalWrite(statusLed, LOW);
+      delay(1000UL);
+      Serial.print(".");
+      digitalWrite(statusLed, HIGH);
+      delay(1000UL);
+    }
+    Serial.println(".");
+    Serial.println("Done!");
     boot_up = false;
   }
 
@@ -108,9 +118,9 @@ void loop() {
   Serial.println(port);
 
   delay(250);
-  digitalWrite(statusLed, HIGH);
-  delay(250);
   digitalWrite(statusLed, LOW);
+  delay(250);
+  digitalWrite(statusLed, HIGH);
 
   Serial.println("Retrieving sensor data...");
   float tempC = mySensor.readTemperature();
@@ -136,9 +146,9 @@ void loop() {
   Serial.println("");
   
   delay(250);
-  digitalWrite(statusLed, HIGH);
-  delay(250);
   digitalWrite(statusLed, LOW);
+  delay(250);
+  digitalWrite(statusLed, HIGH);
 
   delay(30UL * 60UL * 1000UL); //30 minutes
   //delay(15000);
