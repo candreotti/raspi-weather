@@ -20,7 +20,7 @@ BME280 temperature/humidity/pressure sensor logger and browser dashboard for the
 sudo apt-get install sqlite3
 wget http://node-arm.herokuapp.com/node_latest_armhf.deb
 sudo dpkg -i node_latest_armhf.deb
-git clone https://github.com/dventurino/raspi-weather.git
+git clone https://github.com/candreotti/raspi-weather.git
 cd raspi-weather
 npm install
 ```
